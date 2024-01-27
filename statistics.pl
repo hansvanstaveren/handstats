@@ -2,6 +2,8 @@
 
 use Math::CDF;
 
+$split_used = 0;
+
 $alpha = 0.05;
 $superalpha = 0.025;
 $verbose = 0;
@@ -204,14 +206,20 @@ for $t (split(/\n/, $theory_dist)) {
 # print "@distrs\n";
 # die;
 
-#for $t (split(/\n+/, $theory_split)) {
-#print "$t\n";
-#my ($ncards, $high, $low, $n, $p, $frac) = split(/\s+/, $t);
-#my $index = "$high:$low";
-#$s_perc{$index} = $frac;
-#}
-#print "%s_perc\n";
-# die
+#
+# This looks like it should calculate splits, like 5-crd suit split 0 5 or 1 4 or 2 3
+# clearly not implemented further
+#
+
+if ($split_used) {
+    for $t (split(/\n+/, $theory_split)) {
+	print "$t\n";
+	my ($ncards, $high, $low, $n, $p, $frac) = split(/\s+/, $t);
+	my $index = "$high:$low";
+	$s_perc{$index} = $frac;
+    }
+    print %s_perc{"1:1"} if(0);	# prevent warning for this unused code
+}
 
 $complete_hands = 0;
 while(<>) {
