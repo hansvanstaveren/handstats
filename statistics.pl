@@ -6,7 +6,7 @@ $split_used = 0;
 
 $alpha = 0.05;
 $superalpha = 0.025;
-$verbose = 0;
+$verbose = 1;
 
 $errorcode = 0;
 
@@ -226,8 +226,13 @@ while(<>) {
     chomp;
     s/[ \r]*$//;
     s/^ *//;
+
+    #
+    # Sometimes we only have the suitlengths
+    #
     if ($_ =~ /^[0-9 ]*$/) {
 	@nums = split;
+	# Then it should be 16
 	die "wrong number of numbers" unless($#nums == 15);
 	countfreq("N", @nums[0..3]);		# North
 	countfreq("E", @nums[4..7]);		# East
@@ -235,6 +240,8 @@ while(<>) {
 	countfreq("W", @nums[12..15]);		# West
 	next;
     }
+
+    # We have complete hands
 
     my (@countar);
 
@@ -265,6 +272,7 @@ while(<>) {
     # end loop on input
 }
 
+print "read $complete_hands\n";
 if ($complete_hands >= 20) {
     $tests = 0;
     $failed = 0;
@@ -275,6 +283,9 @@ if ($complete_hands >= 20) {
 		my $hc = $hascard{"$h:$s:$c"};
 		$hc = 0 unless defined($hc);
 		$tests++;
+		#
+		# Checking for frequency of specific card in player
+		#
 		my $binom = Math::CDF::pbinom($hc, $nhands/4, 1/4);
 		$ol = outlyer($binom, $alpha/2);
 		$failed++ if ($ol);
@@ -309,7 +320,7 @@ for my $d (@distrs) {
     $short_hands[$l4] += $l;
     $thands = $perc*$nhands;
     # Ignore too seldom cases
-    next if ($thands < 5);
+    next if ($thands < 5 && $verbose < 2);
     $distr_counted++;
     $binom = Math::CDF::pbinom($l, $nhands, $perc);
     $ol = outlyer($binom, $alpha/2);
